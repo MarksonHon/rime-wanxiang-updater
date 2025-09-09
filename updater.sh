@@ -119,6 +119,8 @@ install_wanxiang() {
     curl -# -L -o "$temp_dir/wanxiang.zip" "$TARGET_URL"
     curl -# -L -o "$temp_dir/wanxiang-lts-zh-hans.gram" "$LANGUAGE_MODULE"
     [ -d "$TARGET_DIR" ] || mkdir -p "$TARGET_DIR"
+    [ -f "$TARGET_DIR/wanxiang-version.txt" ] && rm -f "$TARGET_DIR/wanxiang-version.txt"
+    [ -f "$TARGET_DIR/wanxiang-lts-zh-hans.gram" ] && rm -f "$TARGET_DIR/wanxiang-lts-zh-hans.gram"
     unzip -o "$temp_dir/wanxiang.zip" -d "$TARGET_DIR"
     cp "$temp_dir/wanxiang-lts-zh-hans.gram" "$TARGET_DIR"/wanxiang-lts-zh-hans.gram
     rm -rf "$temp_dir"
