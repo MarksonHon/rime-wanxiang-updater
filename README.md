@@ -5,7 +5,7 @@
 Open a Terminal and input:
 
 ```sh
-sh -c “$(curl -Ls https://github.com/MarksonHon/rime-wanxiang-updater/raw/refs/heads/main/updater.sh)”
+sh -c "$(curl -Ls https://github.com/MarksonHon/rime-wanxiang-updater/raw/refs/heads/main/updater.sh)"
 ```
 
 ## System Requirements
@@ -24,12 +24,11 @@ macOS's built-in `zsh` should theoretically run this script directly. If it fail
 
 Windows requires the [Git for Windows client][def0]. Run this script within `git-bash`.
 
-[def0]: https://git-scm.com/downloads/win
-
 Alternatively, you can install `busybox` via `scoop` and run the script within `ash`. However, this method has not been tested and its functionality is not guaranteed.
 
 ### Android
 
-Requires [Termux](def00). After installing `curl`, run this script. Grant Termux full file management permissions.
+Requires [Termux][def1]. After installing `curl`, run this script. Grant Termux full file management permissions.
 
-[def00]: https://termux.dev/cn/
+[def0]: https://git-scm.com/downloads/win
+[def1]: https://termux.dev/cn

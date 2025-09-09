@@ -24,12 +24,11 @@ macOS 自带的 `zsh`，理论上可以直接运行此脚本。如果运行失�
 
 Windows 需要安装 [Git 的 Windows 客户端][def0]，并在 `git-bash` 内运行此脚本。
 
-[def0]: https://git-scm.com/downloads/win
-
 或者，你也可以从 `scoop` 安装 `busybox`，然后在 `ash` 里面运行此脚本，但此种方式未作测试，也不保证可用性。
 
 ### Android
 
-需要使用 [Termux](def1)，并在安装 `curl` 之后运行本脚本，需要给 Termux 授予完全的文件管理权限。
+需要使用 [Termux][def1]，并在安装 `curl` 之后运行本脚本，需要给 Termux 授予完全的文件管理权限。
 
-[def1](https://termux.dev/cn/)
+[def0]: https://git-scm.com/downloads/win
+[def1]: https://termux.dev/cn
