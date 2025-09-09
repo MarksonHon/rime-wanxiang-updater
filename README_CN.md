@@ -5,7 +5,7 @@
 打开一个终端然后运行：
 
 ```sh
-sh -c "$(curl -LO https://github.com/MarksonHon/rime-wanxiang-updater/raw/refs/heads/main/updater.sh)"
+sh -c "$(curl -Ls https://github.com/MarksonHon/rime-wanxiang-updater/raw/refs/heads/main/updater.sh)"
 ```
 
 ## 运行环境要求

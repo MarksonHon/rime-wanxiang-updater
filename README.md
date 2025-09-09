@@ -5,7 +5,7 @@
 Open a Terminal and input:
 
 ```sh
-sh -c “$(curl -LO https://github.com/MarksonHon/rime-wanxiang-updater/raw/refs/heads/main/updater.sh)”
+sh -c “$(curl -Ls https://github.com/MarksonHon/rime-wanxiang-updater/raw/refs/heads/main/updater.sh)”
 ```
 
 ## System Requirements
