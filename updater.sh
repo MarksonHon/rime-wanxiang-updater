@@ -116,6 +116,8 @@ ask_target_edition() {
         read -r CONFIRM
         if [ "$CONFIRM" != "y" ]; then
             SELECTED_EDITION="error"
+        else
+            SWITCH_YES="yes"
         fi
     fi
 }
@@ -160,6 +162,9 @@ install_wanxiang() {
     [ -d "$TARGET_DIR" ] || mkdir -p "$TARGET_DIR"
     [ -f "$TARGET_DIR/wanxiang-version.txt" ] && rm -f "$TARGET_DIR/wanxiang-version.txt"
     [ -f "$TARGET_DIR/wanxiang-lts-zh-hans.gram" ] && rm -f "$TARGET_DIR/wanxiang-lts-zh-hans.gram"
+    [ -f "$TARGET_DIR/filelist.txt" ] && rm -rf "$(cat "$TARGET_DIR/filelist.txt")"
+    unzip -l "$temp_dir/wanxiang.zip" | awk 'NR>3 && $0 !~ /----/ {print $4}' > "$TARGET_DIR"/filelist.txt
+    echo_green "Installing to $TARGET_DIR"
     unzip -o "$temp_dir/wanxiang.zip" -d "$TARGET_DIR" -x $WHITE_LIST_FILES
     for file in $WHITE_LIST_FILES; do
         [ ! -f "$TARGET_DIR/$file" ] && unzip "$temp_dir/wanxiang.zip" "$file" -d "$TARGET_DIR"
