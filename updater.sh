@@ -26,15 +26,6 @@ get_local_wanxiang_version() {
     [ -f "$TARGET_DIR/wanxiang-version.txt" ] && local_version="$(cat "$TARGET_DIR/wanxiang-version.txt")" || local_version="v0.0.0"
 }
 
-compare_versions() {
-    if [ "$latest_version" = "$local_version" ]; then
-        echo "You are already using the latest version: $latest_version"
-        exit 0
-    else
-        echo "A new version is available: $latest_version (current: $local_version)"
-    fi
-}
-
 define_download_urls() {
     WANXIANG_BASE="$GITHUB_RELEASES_URL/download/$latest_version/rime-wanxiang-base.zip"
     WANXIANG_FLYPY="$GITHUB_RELEASES_URL/download/$latest_version/rime-wanxiang-flypy-fuzhu.zip"
@@ -122,6 +113,18 @@ ask_target_edition() {
     fi
 }
 
+
+compare_versions() {
+    if [ "$SWITCH_YES" != "yes" ] && [ "$latest_version" = "$local_version" ]; then
+        echo "You are already using the latest version: $latest_version"
+        exit 0
+    else
+        echo "A new version is available: $latest_version"
+        echo "You are currently using version: $notice_old: $local_version"
+        echo "New version: $notice: $latest_version"
+    fi
+}
+
 ask_user() {
     while true; do
         ask_target_directory
@@ -162,7 +165,12 @@ install_wanxiang() {
     [ -d "$TARGET_DIR" ] || mkdir -p "$TARGET_DIR"
     [ -f "$TARGET_DIR/wanxiang-version.txt" ] && rm -f "$TARGET_DIR/wanxiang-version.txt"
     [ -f "$TARGET_DIR/wanxiang-lts-zh-hans.gram" ] && rm -f "$TARGET_DIR/wanxiang-lts-zh-hans.gram"
-    [ -f "$TARGET_DIR/filelist.txt" ] && rm -rf "$(cat "$TARGET_DIR/filelist.txt")"
+    if [ -f "$TARGET_DIR/filelist.txt" ]; then
+        for file in $(cat "$TARGET_DIR/filelist.txt"); do
+           rm -rf "${TARGET_DIR:?}/$file"
+        done
+        rm -f "$TARGET_DIR/filelist.txt"
+    fi
     unzip -l "$temp_dir/wanxiang.zip" | awk 'NR>3 && $0 !~ /----/ {print $4}' > "$TARGET_DIR"/filelist.txt
     echo_green "Installing to $TARGET_DIR"
     unzip -o "$temp_dir/wanxiang.zip" -d "$TARGET_DIR" -x $WHITE_LIST_FILES
