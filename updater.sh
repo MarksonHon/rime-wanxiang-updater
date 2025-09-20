@@ -162,7 +162,7 @@ install_wanxiang() {
     [ -f "$TARGET_DIR/wanxiang-lts-zh-hans.gram" ] && rm -f "$TARGET_DIR/wanxiang-lts-zh-hans.gram"
     unzip -o "$temp_dir/wanxiang.zip" -d "$TARGET_DIR" -x $WHITE_LIST_FILES
     for file in $WHITE_LIST_FILES; do
-        [ ! -f "$TARGET_DIR/$file" ] && unzip "$temp_dir/wanxiang.zip" "$file" -d "$TARGET_DIR/$file"
+        [ ! -f "$TARGET_DIR/$file" ] && unzip "$temp_dir/wanxiang.zip" "$file" -d "$TARGET_DIR"
     done
     cp "$temp_dir/wanxiang-lts-zh-hans.gram" "$TARGET_DIR"/wanxiang-lts-zh-hans.gram
     rm -rf "$temp_dir"
