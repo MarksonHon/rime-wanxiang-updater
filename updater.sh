@@ -171,7 +171,7 @@ install_wanxiang() {
         done
         rm -f "$TARGET_DIR/filelist.txt"
     fi
-    unzip -l "$temp_dir/wanxiang.zip" | awk 'NR>3 && $0 !~ /----/ {print $4}' > "$TARGET_DIR"/filelist.txt
+    unzip -l "$temp_dir/wanxiang.zip" -x $WHITE_LIST_FILES | awk 'NR>3 && $0 !~ /----/ {print $4}' > "$TARGET_DIR"/filelist.txt
     echo_green "Installing to $TARGET_DIR"
     unzip -o "$temp_dir/wanxiang.zip" -d "$TARGET_DIR" -x $WHITE_LIST_FILES
     for file in $WHITE_LIST_FILES; do
