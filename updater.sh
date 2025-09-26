@@ -5,7 +5,7 @@ set -e
 GITHUB_TAGS_URL="https://github.com/amzxyz/rime_wanxiang/tags"
 GITHUB_RELEASES_URL="https://github.com/amzxyz/rime_wanxiang/releases"
 
-WHITE_LIST_FILES="简纯+.trime.yaml default.yaml squirrel.yaml weasel.yaml"
+WHITE_LIST_FILES="简纯+.trime.yaml default.custom.yaml squirrel.yaml weasel.yaml"
 
 echo_red() {
   printf '\033[31m%s\033[0m\n' "$*"
