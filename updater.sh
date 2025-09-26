@@ -2,7 +2,7 @@
 
 set -e
 
-GITHUB_TAGS_URL="https://github.com/amzxyz/rime_wanxiang/tags"
+GITHUB_TAGS_URL="https://api.github.com/repos/amzxyz/rime_wanxiang/tags"
 GITHUB_RELEASES_URL="https://github.com/amzxyz/rime_wanxiang/releases"
 
 WHITE_LIST_FILES="简纯+.trime.yaml default.custom.yaml squirrel.yaml weasel.yaml"
@@ -19,7 +19,7 @@ echo_green() {
 
 
 get_latest_wanxiang_version() {
-    latest_version="$(curl -s $GITHUB_TAGS_URL | grep -E "tags/v[0-9]+" | awk -F 'tags/' '{print $2}' | grep '.zip' | awk -F '.zip' '{print $1}' | head -n 1)"
+    latest_version="$(curl -s $GITHUB_TAGS_URL| grep 'name' | awk -F '["]' 'NR == 1 {print $4}')"
 }
 
 get_local_wanxiang_version() {
