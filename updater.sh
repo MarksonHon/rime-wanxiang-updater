@@ -4,8 +4,9 @@ set -e
 
 GITHUB_TAGS_URL="https://api.github.com/repos/amzxyz/rime_wanxiang/tags"
 GITHUB_RELEASES_URL="https://github.com/amzxyz/rime_wanxiang/releases"
+CNB_RELEASES_URL="https://cnb.cool/amzxyz/rime-wanxiang/-/releases"
 
-WHITE_LIST_FILES="简纯+.trime.yaml default.custom.yaml squirrel.yaml weasel.yaml"
+WHITE_LIST_FILES="简纯+.trime.yaml default.yaml squirrel.yaml weasel.yaml"
 
 echo_red() {
   printf '\033[31m%s\033[0m\n' "$*"
@@ -27,25 +28,25 @@ get_local_wanxiang_version() {
 }
 
 define_download_urls() {
-    WANXIANG_BASE="$GITHUB_RELEASES_URL/download/$latest_version/rime-wanxiang-base.zip"
-    WANXIANG_FLYPY="$GITHUB_RELEASES_URL/download/$latest_version/rime-wanxiang-flypy-fuzhu.zip"
-    WANXIANG_HANXIN="$GITHUB_RELEASES_URL/download/$latest_version/rime-wanxiang-hanxin-fuzhu.zip"
-    WANXIANG_MOQI="$GITHUB_RELEASES_URL/download/$latest_version/rime-wanxiang-moqi-fuzhu.zip"
-    WANXIANG_TIGER="$GITHUB_RELEASES_URL/download/$latest_version/rime-wanxiang-tiger-fuzhu.zip"
-    WANXIANG_WUBI="$GITHUB_RELEASES_URL/download/$latest_version/rime-wanxiang-wubi-fuzhu.zip"
-    WANXIANG_ZRM="$GITHUB_RELEASES_URL/download/$latest_version/rime-wanxiang-zrm-fuzhu.zip"
-    LANGUAGE_MODULE="https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/wanxiang-lts-zh-hans.gram"
+    WANXIANG_BASE="$CNB_RELEASES_URL/download/$latest_version/rime-wanxiang-base.zip"
+    WANXIANG_FLYPY="$CNB_RELEASES_URL/download/$latest_version/rime-wanxiang-flypy-fuzhu.zip"
+    WANXIANG_HANXIN="$CNB_RELEASES_URL/download/$latest_version/rime-wanxiang-hanxin-fuzhu.zip"
+    WANXIANG_MOQI="$CNB_RELEASES_URL/download/$latest_version/rime-wanxiang-moqi-fuzhu.zip"
+    WANXIANG_TIGER="$CNB_RELEASES_URL/download/$latest_version/rime-wanxiang-tiger-fuzhu.zip"
+    WANXIANG_WUBI="$CNB_RELEASES_URL/download/$latest_version/rime-wanxiang-wubi-fuzhu.zip"
+    WANXIANG_ZRM="$CNB_RELEASES_URL/download/$latest_version/rime-wanxiang-zrm-fuzhu.zip"
+    LANGUAGE_MODULE="https://cnb.cool/amzxyz/rime-wanxiang/-/releases/download/model/wanxiang-lts-zh-hans.gram"
 }
 
 ask_target_directory() {
-    echo_green "Please choose an input method with rime, so we can download files to correct directory:"
+    echo_green "选择输入框架，或者输入自定义安装位置："
     echo "1. ibus-rime"
     echo "2. fcitx5-rime"
     echo "3. Weasel | 小狼毫"
     echo "4. Squirrel | 鼠鬚管 | 鼠须管"
-    echo "5. Trime on Android | 安卓同文"
-    echo "6. Custom Dictionary"
-    echo "Please enter the input method number: "
+    echo "5. Trime | 同文"
+    echo "6. 手动输入自定义目录"
+    echo "输入你的选择： "
     read -r INPUT_METHOD
     case $INPUT_METHOD in
     1) TARGET_DIR="$HOME/.config/ibus/rime" ;;
@@ -54,7 +55,7 @@ ask_target_directory() {
     4) TARGET_DIR="$HOME/Library/Rime" ;;
     5) TARGET_DIR="/sdcard/rime" ;;
     6) 
-        echo_green "Please enter the custom dictionary directory: "
+        echo_green "输入你的自定义目录: "
         read -r TARGET_DIR
         ;;
     *) TARGET_DIR="error" ;;
@@ -62,35 +63,15 @@ ask_target_directory() {
 }
 
 ask_target_edition() {
-    notice_stand="Stand IME (Support Shuangpin) | 标准版输入方案（支持双拼）"
-    notice_zrm="ZRM auxiliary Enhanced version | 增强版自然码辅助版本"
-    notice_tiger="Tiger auxiliary Enhanced version | 增强版虎码首末辅助版本"
-    notice_moqi="Moqi auxiliary Enhanced version | 增强版墨奇辅助版本"
-    notice_xiaohe="Xiaohe(flypy) auxiliary Enhanced version | 增强版小鹤辅助版本"
-    notice_wubi="Wubi | 五笔"
-    notice_hanxin="Hanxin auxiliary Enhanced version | 增强版汉芯辅助版本"
-    echo_green "Please choose an input edition, such as Pinyin(全拼)、Wubi(五笔)、flypy(小鹤双拼) or others, and whether to use auxiliary solutions:"
-    echo "1. $notice_stand"
-    echo "2. $notice_zrm"
-    echo "3. $notice_tiger"
-    echo "4. $notice_moqi"
-    echo "5. $notice_xiaohe"
-    echo "6. $notice_wubi"
-    echo "7. $notice_hanxin"
-    echo "Please enter the edition number: "
-    read -r EDITION
-    case $EDITION in
-    1) SELECTED_EDITION="stand" && notice=$notice_stand ;;
-    2) SELECTED_EDITION="zrm" && notice=$notice_zrm ;;
-    3) SELECTED_EDITION="tiger" && notice=$notice_tiger ;;
-    4) SELECTED_EDITION="moqi" && notice=$notice_moqi ;;
-    5) SELECTED_EDITION="xiaohe" && notice=$notice_xiaohe ;;
-    6) SELECTED_EDITION="wubi" && notice=$notice_wubi ;;
-    7) SELECTED_EDITION="hanxin" && notice=$notice_hanxin ;;
-    *) SELECTED_EDITION="error" ;;
-    esac
+    notice_stand="标准版输入方案"
+    notice_zrm="增强版自然码辅助版本"
+    notice_tiger="增强版虎码首末辅助版本"
+    notice_moqi="增强版墨奇辅助版本"
+    notice_xiaohe="增强版小鹤辅助版本"
+    notice_wubi="五笔"
+    notice_hanxin="增强版汉芯辅助版本"
     [ -f "$TARGET_DIR/wanxiang-edition.txt" ] && local_edition="$(cat "$TARGET_DIR/wanxiang-edition.txt")" || local_edition="none"
-    if [ "$local_edition" != "none" ]; then
+        if [ "$local_edition" != "none" ]; then
         case $local_edition in
             "stand") notice_old=$notice_stand ;;
             "zrm") notice_old=$notice_zrm ;;
@@ -102,8 +83,29 @@ ask_target_edition() {
             *) notice_old="broken" ;;
         esac
     fi
+    echo "当前配置方案: $notice_old：$local_version"
+    echo_green "请选择输入方案："
+    echo "1. $notice_stand"
+    echo "2. $notice_zrm"
+    echo "3. $notice_tiger"
+    echo "4. $notice_moqi"
+    echo "5. $notice_xiaohe"
+    echo "6. $notice_wubi"
+    echo "7. $notice_hanxin"
+    echo "输入你的选择："
+    read -r EDITION
+    case $EDITION in
+    1) SELECTED_EDITION="stand" && notice=$notice_stand ;;
+    2) SELECTED_EDITION="zrm" && notice=$notice_zrm ;;
+    3) SELECTED_EDITION="tiger" && notice=$notice_tiger ;;
+    4) SELECTED_EDITION="moqi" && notice=$notice_moqi ;;
+    5) SELECTED_EDITION="xiaohe" && notice=$notice_xiaohe ;;
+    6) SELECTED_EDITION="wubi" && notice=$notice_wubi ;;
+    7) SELECTED_EDITION="hanxin" && notice=$notice_hanxin ;;
+    *) SELECTED_EDITION="error" ;;
+    esac
     if [ "$local_edition" != "none" ] && [ "$SELECTED_EDITION" != "$local_edition" ]; then
-        echo_yellow "You have selected a different edition than the current one ($notice_old), The current edition will be replaced with the new one ($notice). Continue? (y/n)"
+        echo_yellow "您选择的输入方案与当前方案 ($notice_old) 不同，当前方案将被替换为新方案 ($notice)。继续吗？(y/n)"
         read -r CONFIRM
         if [ "$CONFIRM" != "y" ]; then
             SELECTED_EDITION="error"
@@ -116,32 +118,13 @@ ask_target_edition() {
 
 compare_versions() {
     if [ "$SWITCH_YES" != "yes" ] && [ "$latest_version" = "$local_version" ]; then
-        echo "You are already using the latest version: $latest_version"
+        echo "当前已经是最新版本：$latest_version"
         exit 0
     else
-        echo "A new version is available: $latest_version"
-        echo "You are currently using version: $notice_old: $local_version"
-        echo "New version: $notice: $latest_version"
+        echo "有新版本可用: $latest_version"
+        echo "您当前使用的版本: $notice_old: $local_version"
+        echo "新版本: $notice: $latest_version"
     fi
-}
-
-ask_user() {
-    while true; do
-        ask_target_directory
-        if [ "$TARGET_DIR" = "error" ]; then
-            echo "Invalid input. Please try again."
-        else
-            break
-        fi
-    done
-    while true; do
-        ask_target_edition
-        if [ "$SELECTED_EDITION" = "error" ]; then
-            echo "Invalid input. Please try again."
-        else
-            break
-        fi
-    done
 }
 
 define_target_urls() {
@@ -158,9 +141,9 @@ define_target_urls() {
 
 install_wanxiang() {
     temp_dir=$(mktemp -d -t "wanxiang-XXXXXXX")
-    echo_green "Downloading $TARGET_URL"
+    echo_green "下载 $TARGET_URL"
     curl -# -L -o "$temp_dir/wanxiang.zip" "$TARGET_URL"
-    echo_green "Downloading $LANGUAGE_MODULE"
+    echo_green "下载 $LANGUAGE_MODULE"
     curl -# -L -o "$temp_dir/wanxiang-lts-zh-hans.gram" "$LANGUAGE_MODULE"
     [ -d "$TARGET_DIR" ] || mkdir -p "$TARGET_DIR"
     [ -f "$TARGET_DIR/wanxiang-version.txt" ] && rm -f "$TARGET_DIR/wanxiang-version.txt"
@@ -184,9 +167,24 @@ install_wanxiang() {
 }
 
 main() {    
-    ask_user
-    get_latest_wanxiang_version
+    while true; do
+        ask_target_directory
+        if [ "$TARGET_DIR" = "error" ]; then
+            echo_yellow "无效输入，请重试。"
+        else
+            break
+        fi
+    done
     get_local_wanxiang_version
+    while true; do
+        ask_target_edition
+        if [ "$SELECTED_EDITION" = "error" ]; then
+            echo_yellow "无效输入，请重试。"
+        else
+            break
+        fi
+    done
+    get_latest_wanxiang_version
     compare_versions
     define_download_urls
     define_target_urls
