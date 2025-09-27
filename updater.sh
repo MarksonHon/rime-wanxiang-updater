@@ -83,7 +83,7 @@ ask_target_edition() {
             *) notice_old="broken" ;;
         esac
     fi
-    echo "当前配置方案: $notice_old：$local_version"
+    echo_yellow "当前配置方案: $notice_old：$local_version"
     echo_green "请选择输入方案："
     echo "1. $notice_stand"
     echo "2. $notice_zrm"
@@ -142,9 +142,17 @@ define_target_urls() {
 install_wanxiang() {
     temp_dir=$(mktemp -d -t "wanxiang-XXXXXXX")
     echo_green "下载 $TARGET_URL"
-    curl -# -L -o "$temp_dir/wanxiang.zip" "$TARGET_URL"
+    if ! curl -# -L -o "$temp_dir/wanxiang.zip" "$TARGET_URL"; then
+        echo_red "下载失败，请检查网络连接或稍后重试。"
+        rm -rf "$temp_dir"
+        exit 1
+    fi
     echo_green "下载 $LANGUAGE_MODULE"
-    curl -# -L -o "$temp_dir/wanxiang-lts-zh-hans.gram" "$LANGUAGE_MODULE"
+    if ! curl -# -L -o "$temp_dir/wanxiang-lts-zh-hans.gram" "$LANGUAGE_MODULE"; then
+        echo_red "下载失败，请检查网络连接或稍后重试。"
+        rm -rf "$temp_dir"
+        exit 1
+    fi
     [ -d "$TARGET_DIR" ] || mkdir -p "$TARGET_DIR"
     [ -f "$TARGET_DIR/wanxiang-version.txt" ] && rm -f "$TARGET_DIR/wanxiang-version.txt"
     [ -f "$TARGET_DIR/wanxiang-lts-zh-hans.gram" ] && rm -f "$TARGET_DIR/wanxiang-lts-zh-hans.gram"
