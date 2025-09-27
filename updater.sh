@@ -205,16 +205,19 @@ install_wanxiang() {
         rm -rf "$temp_dir"
         exit 1
     fi
-    [ -d "$TARGET_DIR" ] || mkdir -p "$TARGET_DIR"
-    [ -f "$TARGET_DIR/wanxiang-version.txt" ] && rm -f "$TARGET_DIR/wanxiang-version.txt"
-    [ -f "$TARGET_DIR/wanxiang-lts-zh-hans.gram" ] && rm -f "$TARGET_DIR/wanxiang-lts-zh-hans.gram"
+    if [ -d "$TARGET_DIR" ]; then
+        [ -f "$TARGET_DIR/wanxiang-version.txt" ] && rm -f "$TARGET_DIR/wanxiang-version.txt"
+        [ -f "$TARGET_DIR/wanxiang-lts-zh-hans.gram" ] && rm -f "$TARGET_DIR/wanxiang-lts-zh-hans.gram"
+    fi
     if [ -f "$TARGET_DIR/filelist.txt" ]; then
-        while read -r file; do
-            rm -rf "${TARGET_DIR:?}/$file"
-        done <"$TARGET_DIR/filelist.txt"
+        for file in $(cat "$TARGET_DIR/filelist.txt"); do
+            [ -f "${TARGET_DIR:?}/$file" ] && rm -f "${TARGET_DIR:?}/$file"
+            [ -d "${TARGET_DIR:?}/$file" ] && rm -rf "${TARGET_DIR:?}/$file"
+        done 
         rm -f "$TARGET_DIR/filelist.txt"
     fi
-    unzip -l "$temp_dir/wanxiang.zip" -x $WHITE_LIST_FILES | awk 'NR>3 && $0 !~ /----/ {print $4}' >"$TARGET_DIR"/filelist.txt
+    [ -d "$TARGET_DIR" ] || mkdir -p "$TARGET_DIR"
+    unzip -l "$temp_dir/wanxiang.zip" -x $WHITE_LIST_FILES | awk 'NR>3 && $0 !~ /----/ {print $4}' | tee "$TARGET_DIR"/filelist.txt >/dev/null
     echo_green "将下载的文件安装到 $TARGET_DIR"
     unzip "$temp_dir/wanxiang.zip" -d "$TARGET_DIR" -x $WHITE_LIST_FILES
     for file in $WHITE_LIST_FILES; do
