@@ -53,10 +53,6 @@ test_cnb() {
 }
 
 test_network() {
-    if ! test_github_api; then
-        echo_red "无法连接到 GitHub API，请检查网络连接。"
-        exit 1
-    fi
     test_github
     test_cnb
     if [ "$(echo "$TIMEOUT_GITHUB" "<" "$TIMEOUT_CNB" | bc)" -eq 1 ]; then
@@ -252,6 +248,10 @@ main() {
             break
         fi
     done
+    if ! test_github_api; then
+        echo_red "无法连接到 GitHub API，请检查网络连接。"
+        exit 1
+    fi
     get_latest_wanxiang_version
     compare_versions
     test_network
