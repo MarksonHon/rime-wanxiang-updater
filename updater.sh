@@ -60,10 +60,10 @@ test_network() {
     test_github
     test_cnb
     if [ "$(echo "$TIMEOUT_GITHUB" "<" "$TIMEOUT_CNB" | bc)" -eq 1 ]; then
-        echo_green "连接到 GitHub 的延迟较低，使用 GitHub 进行下载。"
+        echo_green "连接到 GitHub 的延迟较低，从 GitHub 进行下载。"
         DOWNLOAD_PLATFORM="github"
     else
-        echo_green "连接到 CNB 的延迟较低，使用 CNB 进行下载。"
+        echo_green "连接到 CNB 的延迟较低，从 CNB 进行下载。"
         DOWNLOAD_PLATFORM="cnb"
     fi
 }
@@ -156,7 +156,9 @@ ask_target_edition() {
     *) SELECTED_EDITION="error" ;;
     esac
     if [ "$local_edition" != "none" ] && [ "$SELECTED_EDITION" != "$local_edition" ]; then
-        echo_yellow "您选择的输入方案与当前方案 ($notice_old) 不同，当前方案将被替换为新方案 ($notice)。继续吗？(y/n)"
+        echo_yellow "您选择的输入方案：$notice"
+        echo_yellow "您当前使用的输入方案：$notice_old"
+        echo_yellow "如果继续，方案将被替换，继续吗？(y/n)"
         read -r CONFIRM
         if [ "$CONFIRM" != "y" ]; then
             SELECTED_EDITION="error"
@@ -209,14 +211,19 @@ install_wanxiang() {
     if [ -f "$TARGET_DIR/filelist.txt" ]; then
         while read -r file; do
             rm -rf "${TARGET_DIR:?}/$file"
-        done < "$TARGET_DIR/filelist.txt"
+        done <"$TARGET_DIR/filelist.txt"
         rm -f "$TARGET_DIR/filelist.txt"
     fi
     unzip -l "$temp_dir/wanxiang.zip" -x $WHITE_LIST_FILES | awk 'NR>3 && $0 !~ /----/ {print $4}' >"$TARGET_DIR"/filelist.txt
-    echo_green "Installing to $TARGET_DIR"
-    unzip -o "$temp_dir/wanxiang.zip" -d "$TARGET_DIR" -x $WHITE_LIST_FILES
+    echo_green "将下载的文件安装到 $TARGET_DIR"
+    unzip "$temp_dir/wanxiang.zip" -d "$TARGET_DIR" -x $WHITE_LIST_FILES
     for file in $WHITE_LIST_FILES; do
-        [ ! -f "$TARGET_DIR/$file" ] && unzip "$temp_dir/wanxiang.zip" "$file" -d "$TARGET_DIR"
+        if [ "$SWITCH_YES" = "yes" ]; then
+            [ -f "$TARGET_DIR/$file" ] && rm -f "$TARGET_DIR/$file"
+            unzip "$temp_dir/wanxiang.zip" "$file" -d "$TARGET_DIR"
+        else
+            [ ! -f "$TARGET_DIR/$file" ] && unzip "$temp_dir/wanxiang.zip" "$file" -d "$TARGET_DIR"
+        fi
     done
     cp "$temp_dir/wanxiang-lts-zh-hans.gram" "$TARGET_DIR"/wanxiang-lts-zh-hans.gram
     rm -rf "$temp_dir"
