@@ -30,10 +30,14 @@ test_github_api() {
     echo_yellow "测试是否能连接到 GitHub API，这可能需要 10 秒钟左右，如果失败将自动重试若干次..."
     while true; do
         if [ "$(curl -o /dev/null -m 10 -s -w "%{http_code}\n" $GITHUB_TAGS_URL)" != "200" ]; then
-            i=1
-            echo_yellow "GitHub API 连接失败，尝试重新连接到 GitHub API ($i/5)..."
             i=$((i + 1))
-            [ $i -gt 5 ] && echo_red "无法连接到 GitHub API，请检查网络连接。" && exit 1
+            echo_yellow "GitHub API 连接失败，尝试重新连接到 GitHub API ($i/6)..."
+            [ $i -gt 3 ] && return
+            sleep 2
+        elif [ "$(curl --doh-url https://223.5.5.5/dns-query -o /dev/null -m 10 -s -w "%{http_code}\n" $GITHUB_TAGS_URL)" != "200" ]; then
+            i=$((i + 1))
+            echo_yellow "GitHub API 连接失败，尝试重新连接到 GitHub API ($i/6)..."
+            [ $i -gt 6 ] && echo_red "连接 GitHub API 失败，请检查网络后再次尝试。" && exit 1
             sleep 2
         else
             echo_green "成功连接到 GitHub API。"
@@ -44,28 +48,35 @@ test_github_api() {
 
 test_github() {
     echo_yellow "测试连接到 GitHub 的延迟，这可能需要 10 秒钟左右..."
-    TIMEOUT_GITHUB=$(curl -o /dev/null -m 10 -s -w "%{time_total}" $GITHUB_RELEASES_URL)
+    if ! (TIMEOUT_GITHUB=$(curl -o /dev/null -m 10 -s -w "%{time_total}" $GITHUB_RELEASES_URL)); then
+        TIMEOUT_GITHUB=1000
+    fi
 }
 
 test_cnb() {
     echo_yellow "测试连接到 CNB 的延迟，这可能需要 10 秒钟左右..."
-    TIMEOUT_CNB=$(curl -o /dev/null -m 10 -s -w "%{time_total}" $CNB_RELEASES_URL)
+    if ! (TIMEOUT_CNB=$(curl -o /dev/null -m 10 -s -w "%{time_total}" $CNB_RELEASES_URL)); then
+        TIMEOUT_CNB=1000
+    fi
 }
 
 test_network() {
     test_github
     test_cnb
-    awk 'BEGIN {if ("'"$TIMEOUT_GITHUB"'" < "'"$TIMEOUT_CNB"'") exit 0}'
-    if [ $? -eq 0 ]; then
-        echo_green "连接到 GitHub 的延迟较低，从 GitHub 进行下载。"
-        DOWNLOAD_PLATFORM="github"
-    else
-        echo_green "连接到 CNB 的延迟较低，从 CNB 进行下载。"
-        DOWNLOAD_PLATFORM="cnb"
+    if [ "$TIMEOUT_CNB" = "1000" ] && [ "$TIMEOUT_GITHUB" = "1000" ]; then
+        echo_red "无法连接到 GitHub 或 CNB，请检查网络连接。"
+        exit 1
     fi
+    DOWNLOAD_PLATFORM=$(awk -v timeout_github="$TIMEOUT_GITHUB" -v timeout_cnb="$TIMEOUT_CNB" 'BEGIN {
+    if (timeout_github < timeout_cnb) {
+        print "github" } else {
+            print "cnb"
+        }
+    }')
 }
 define_download_urls() {
     if [ "$DOWNLOAD_PLATFORM" = "github" ]; then
+    DOWNLOAD_PLATFORM_FULLNAME="GitHub"
         WANXIANG_BASE="$GITHUB_RELEASES_URL/download/$latest_version/rime-wanxiang-base.zip"
         WANXIANG_FLYPY="$GITHUB_RELEASES_URL/download/$latest_version/rime-wanxiang-flypy-fuzhu.zip"
         WANXIANG_HANXIN="$GITHUB_RELEASES_URL/download/$latest_version/rime-wanxiang-hanxin-fuzhu.zip"
@@ -83,7 +94,9 @@ define_download_urls() {
         WANXIANG_WUBI="$CNB_RELEASES_URL/download/$latest_version/rime-wanxiang-wubi-fuzhu.zip"
         WANXIANG_ZRM="$CNB_RELEASES_URL/download/$latest_version/rime-wanxiang-zrm-fuzhu.zip"
         LANGUAGE_MODULE="https://cnb.cool/amzxyz/rime-wanxiang/-/releases/download/model/wanxiang-lts-zh-hans.gram"
+        DOWNLOAD_PLATFORM_FULLNAME="CNB - 云原生构建平台"
     fi
+    echo_yellow "根据延迟，选择从延迟更低的 $DOWNLOAD_PLATFORM_FULLNAME 下载。"
 }
 
 ask_target_directory() {
@@ -210,7 +223,7 @@ install_wanxiang() {
         for file in $(cat "$TARGET_DIR/filelist.txt"); do
             [ -f "${TARGET_DIR:?}/$file" ] && rm -f "${TARGET_DIR:?}/$file"
             [ -d "${TARGET_DIR:?}/$file" ] && rm -rf "${TARGET_DIR:?}/$file"
-        done 
+        done
         rm -f "$TARGET_DIR/filelist.txt"
     fi
     [ -d "$TARGET_DIR" ] || mkdir -p "$TARGET_DIR"
