@@ -55,7 +55,8 @@ test_cnb() {
 test_network() {
     test_github
     test_cnb
-    if [ "$(echo "$TIMEOUT_GITHUB" "<" "$TIMEOUT_CNB" | bc)" -eq 1 ]; then
+    awk 'BEGIN {if ("'"$TIMEOUT_GITHUB"'" < "'"$TIMEOUT_CNB"'") exit 0}'
+    if [ $? -eq 0 ]; then
         echo_green "连接到 GitHub 的延迟较低，从 GitHub 进行下载。"
         DOWNLOAD_PLATFORM="github"
     else
@@ -72,7 +73,7 @@ define_download_urls() {
         WANXIANG_TIGER="$GITHUB_RELEASES_URL/download/$latest_version/rime-wanxiang-tiger-fuzhu.zip"
         WANXIANG_WUBI="$GITHUB_RELEASES_URL/download/$latest_version/rime-wanxiang-wubi-fuzhu.zip"
         WANXIANG_ZRM="$GITHUB_RELEASES_URL/download/$latest_version/rime-wanxiang-zrm-fuzhu.zip"
-        LANGUAGE_MODULE="https://github.com/amzxyz/rime_wanxiang/releases/download/model/wanxiang-lts-zh-hans.gram"
+        LANGUAGE_MODULE="https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/wanxiang-lts-zh-hans.gram"
     elif [ "$DOWNLOAD_PLATFORM" = "cnb" ]; then
         WANXIANG_BASE="$CNB_RELEASES_URL/download/$latest_version/rime-wanxiang-base.zip"
         WANXIANG_FLYPY="$CNB_RELEASES_URL/download/$latest_version/rime-wanxiang-flypy-fuzhu.zip"
