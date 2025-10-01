@@ -103,34 +103,35 @@ ask_target_directory() {
     echo_green "选择输入框架，或者输入自定义安装位置："
     echo "1. ibus-rime"
     echo "2. fcitx5-rime"
-    echo "3. Weasel | 小狼毫"
-    echo "4. Squirrel | 鼠鬚管 | 鼠须管"
-    echo "5. Trime | 同文"
-    echo "6. 手动输入自定义目录"
+    echo "3. fcitx5-rime(FlatHub)"
+    echo "4. Weasel | 小狼毫"
+    echo "5. Squirrel | 鼠鬚管 | 鼠须管"
+    echo "6. Trime | 同文"
+    echo "7. 手动输入自定义目录"
     echo "输入你的选择： "
     read -r INPUT_METHOD
     case $INPUT_METHOD in
     1) TARGET_DIR="$HOME/.config/ibus/rime" ;;
     2) TARGET_DIR="$HOME/.local/share/fcitx5/rime" ;;
-    3) TARGET_DIR="$HOME/AppData/Roaming/Rime" ;;
-    4) TARGET_DIR="$HOME/Library/Rime" ;;
-    5) TARGET_DIR="/sdcard/rime" ;;
-    6)
-        echo_green "输入你的自定义目录: "
-        read -r TARGET_DIR
-        ;;
+    3) TARGET_DIR="$HOME/.var/app/org.fcitx.Fcitx5/data/fcitx5/rime" ;;
+    4) TARGET_DIR="$HOME/AppData/Roaming/Rime" ;;
+    5) TARGET_DIR="$HOME/Library/Rime" ;;
+    6) TARGET_DIR="/storage/emulated/0/rime" ;;
+    7) echo_green "输入你的自定义目录: "
+       read -r TARGET_DIR
+       ;;
     *) TARGET_DIR="error" ;;
     esac
 }
 
 ask_target_edition() {
     notice_stand="标准版输入方案"
-    notice_zrm="增强版自然码辅助版本"
-    notice_tiger="增强版虎码首末辅助版本"
-    notice_moqi="增强版墨奇辅助版本"
-    notice_xiaohe="增强版小鹤辅助版本"
-    notice_wubi="五笔"
-    notice_hanxin="增强版汉芯辅助版本"
+    notice_zrm="自然码辅助版本"
+    notice_tiger="虎码首末辅助版本"
+    notice_moqi="墨奇辅助版本"
+    notice_xiaohe="小鹤辅助版本"
+    notice_wubi="五笔前2辅助版本"
+    notice_hanxin="汉芯辅助版本"
     [ -f "$TARGET_DIR/wanxiang-edition.txt" ] && local_edition="$(cat "$TARGET_DIR/wanxiang-edition.txt")" || local_edition="none"
     if [ "$local_edition" != "none" ]; then
         case $local_edition in
@@ -144,7 +145,8 @@ ask_target_edition() {
         *) notice_old="broken" ;;
         esac
     fi
-    echo_yellow "当前配置方案: $notice_old：$local_version"
+    echo_yellow "当前配置方案：$notice_old"
+    echo_yellow "当前版本：$local_version"
     echo_green "请选择输入方案："
     echo "1. $notice_stand"
     echo "2. $notice_zrm"
