@@ -186,8 +186,8 @@ compare_versions() {
         exit 0
     else
         echo "有新版本可用: $latest_version"
-        echo "您当前使用的版本: $notice_old: $local_version"
-        echo "新版本: $notice: $latest_version"
+        echo "您当前使用的版本: $notice_old - $local_version"
+        echo "新版本: $notice - $latest_version"
     fi
 }
 

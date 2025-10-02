@@ -34,7 +34,7 @@ sh -c "$(curl --doh-url https://223.5.5.5/dns-query -Ls https://cdn.jsdelivr.net
 
 #### fcitx5-rime
 
-由于 Android 限制，`/data/data` 是不可访问的，因此你需要通过小企鹅输入法的设置手动打开 Rime 的配置目录，然后把已经配置好的文件复制过去。
+由于 Android 限制，`/data/data` 是不可访问的，因此你需要通过小企鹅输入法的“设置”手动打开 Rime 的配置目录，然后把已经配置好的文件复制过去。
 
 [def0]: https://git-scm.com/downloads/win
 [def1]: https://termux.dev/cn
