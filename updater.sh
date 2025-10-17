@@ -6,7 +6,7 @@ GITHUB_TAGS_URL="https://api.github.com/repos/amzxyz/rime_wanxiang/tags"
 GITHUB_RELEASES_URL="https://github.com/amzxyz/rime_wanxiang/releases"
 CNB_RELEASES_URL="https://cnb.cool/amzxyz/rime-wanxiang/-/releases"
 
-WHITE_LIST_FILES="简纯+.trime.yaml default.yaml squirrel.yaml weasel.yaml"
+WHITE_LIST_FILES="简纯+.trime.yaml default.yaml weasel.yaml"
 
 echo_red() {
     printf '\033[31m%s\033[0m\n' "$*"
@@ -240,6 +240,13 @@ install_wanxiang() {
             [ ! -f "$TARGET_DIR/$file" ] && unzip "$temp_dir/wanxiang.zip" "$file" -d "$TARGET_DIR"
         fi
     done
+    [ "$SWITCH_YES" = "yes" ] && if [ "$SELECTED_EDITION" = "stand" ]; then
+        [ -f "$TARGET_DIR/wanxiang_pro.custom.yaml" ] && mv "$TARGET_DIR/wanxiang_pro.custom.yaml" "$TARGET_DIR/wanxiang_pro.custom.yaml.bak"
+        [ -f "$TARGET_DIR/wanxiang.custom.yaml.bak" ] && mv "$TARGET_DIR/wanxiang.custom.yaml.bak" "$TARGET_DIR/wanxiang.custom.yaml"
+    else
+        [ -f "$TARGET_DIR/wanxiang_pro.custom.yaml.bak" ] && mv "$TARGET_DIR/wanxiang_pro.custom.yaml.bak" "$TARGET_DIR/wanxiang_pro.custom.yaml"
+        [ -f "$TARGET_DIR/wanxiang.custom.yaml" ] && mv "$TARGET_DIR/wanxiang.custom.yaml" "$TARGET_DIR/wanxiang.custom.yaml.bak"
+    fi
     cp "$temp_dir/wanxiang-lts-zh-hans.gram" "$TARGET_DIR"/wanxiang-lts-zh-hans.gram
     rm -rf "$temp_dir"
     echo "$latest_version" >"$TARGET_DIR/wanxiang-version.txt"
