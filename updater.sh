@@ -6,7 +6,7 @@ GITHUB_TAGS_URL="https://api.github.com/repos/amzxyz/rime_wanxiang/tags"
 GITHUB_RELEASES_URL="https://github.com/amzxyz/rime_wanxiang/releases"
 CNB_RELEASES_URL="https://cnb.cool/amzxyz/rime-wanxiang/-/releases"
 
-WHITE_LIST_FILES="简纯+.trime.yaml default.yaml weasel.yaml"
+WHITE_LIST_FILES="default.yaml weasel.yaml"
 
 echo_red() {
     printf '\033[31m%s\033[0m\n' "$*"
@@ -224,7 +224,6 @@ install_wanxiang() {
     if [ -f "$TARGET_DIR/filelist.txt" ]; then
         for file in $(cat "$TARGET_DIR/filelist.txt"); do
             [ -f "${TARGET_DIR:?}/$file" ] && rm -f "${TARGET_DIR:?}/$file"
-            [ -d "${TARGET_DIR:?}/$file" ] && rm -rf "${TARGET_DIR:?}/$file"
         done
         rm -f "$TARGET_DIR/filelist.txt"
     fi
@@ -235,9 +234,9 @@ install_wanxiang() {
     for file in $WHITE_LIST_FILES; do
         if [ "$SWITCH_YES" = "yes" ]; then
             [ -f "$TARGET_DIR/$file" ] && rm -f "$TARGET_DIR/$file"
-            unzip "$temp_dir/wanxiang.zip" "$file" -d "$TARGET_DIR"
+            unzip -o "$temp_dir/wanxiang.zip" "$file" -d "$TARGET_DIR"
         else
-            [ ! -f "$TARGET_DIR/$file" ] && unzip "$temp_dir/wanxiang.zip" "$file" -d "$TARGET_DIR"
+            [ ! -f "$TARGET_DIR/$file" ] && unzip -o "$temp_dir/wanxiang.zip" "$file" -d "$TARGET_DIR"
         fi
     done
     [ "$SWITCH_YES" = "yes" ] && if [ "$SELECTED_EDITION" = "stand" ]; then
