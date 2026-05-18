@@ -19,7 +19,7 @@ echo_green() {
 }
 
 get_latest_wanxiang_version() {
-    latest_version="$(curl -s $GITHUB_TAGS_URL | grep 'name' | awk -F '["]' 'NR == 1 {print $4}')"
+    latest_version="$(curl -s -L $GITHUB_TAGS_URL | grep 'name' | awk -F '["]' 'NR == 1 {print $4}')"
 }
 
 get_local_wanxiang_version() {
@@ -29,12 +29,12 @@ get_local_wanxiang_version() {
 test_github_api() {
     echo_yellow "测试是否能连接到 GitHub API，这可能需要 10 秒钟左右，如果失败将自动重试若干次..."
     while true; do
-        if [ "$(curl -o /dev/null -m 10 -s -w "%{http_code}\n" $GITHUB_TAGS_URL)" != "200" ]; then
+        if [ "$(curl -o /dev/null -m 10 -s -w "%{http_code}\n" $GITHUB_TAGS_URL)" != "301" ]; then
             i=$((i + 1))
             echo_yellow "GitHub API 连接失败，尝试重新连接到 GitHub API ($i/6)..."
             [ $i -gt 3 ] && return
             sleep 2
-        elif [ "$(curl --doh-url https://223.5.5.5/dns-query -o /dev/null -m 10 -s -w "%{http_code}\n" $GITHUB_TAGS_URL)" != "200" ]; then
+        elif [ "$(curl --doh-url https://223.5.5.5/dns-query -o /dev/null -m 10 -s -w "%{http_code}\n" $GITHUB_TAGS_URL)" != "301" ]; then
             i=$((i + 1))
             echo_yellow "GitHub API 连接失败，尝试重新连接到 GitHub API ($i/6)..."
             [ $i -gt 6 ] && echo_red "连接 GitHub API 失败，请检查网络后再次尝试。" && exit 1
@@ -282,4 +282,4 @@ main() {
     install_wanxiang
 }
 
-main
+main @
